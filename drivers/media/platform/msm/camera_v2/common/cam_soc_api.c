@@ -353,7 +353,7 @@ int msm_camera_clk_enable(struct device *dev,
 
 	if (enable) {
 		for (i = 0; i < num_clk; i++) {
-			CDBG("enable %s\n", clk_info[i].clk_name);
+			pr_err("enable %s\n", clk_info[i].clk_name);
 			if (clk_info[i].clk_rate > 0) {
 				clk_rate = clk_round_rate(clk_ptr[i],
 					clk_info[i].clk_rate);
@@ -405,7 +405,7 @@ int msm_camera_clk_enable(struct device *dev,
 	} else {
 		for (i = num_clk - 1; i >= 0; i--) {
 			if (clk_ptr[i] != NULL) {
-				CDBG("%s disable %s\n", __func__,
+				pr_err("%s disable %s\n", __func__,
 					clk_info[i].clk_name);
 				clk_disable_unprepare(clk_ptr[i]);
 			}
