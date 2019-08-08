@@ -838,7 +838,7 @@ static void ipa_rx_switch_to_intr_mode(struct ipa_sys_context *sys)
 	}
 
 	if (!atomic_read(&sys->curr_polling_state)) {
-		IPAERR("already in intr mode\n");
+		IPAERR("Not in poll mode, and IRQ not enabled.\n");
 		goto fail;
 	}
 
