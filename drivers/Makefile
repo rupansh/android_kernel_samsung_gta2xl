@@ -177,3 +177,6 @@ ifeq ($(CONFIG_FB_MSM_MDSS_SAMSUNG),y)
 endif
 
 obj-$(CONFIG_SENSORS_CORE)     += sensors/
+
+# <t-base drivers
+obj-$(CONFIG_TRUSTONIC_TEE)    += gud/
