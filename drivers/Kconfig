@@ -204,4 +204,6 @@ source "drivers/ccic/Kconfig"
 
 source "drivers/five/Kconfig"
 
+source "drivers/debug/Kconfig"
+
 endmenu
