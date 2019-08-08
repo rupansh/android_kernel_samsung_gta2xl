@@ -94,6 +94,11 @@ PHONY += dtbs dtbs_install
 dtbs: prepare scripts
 	$(Q)$(MAKE) $(build)=$(boot)/dts
 
+# SDM450
+ifeq ($(CONFIG_ARCH_SDM450),y)
+	$(Q)$(MAKE) $(build)=$(boot)/dts/samsung/sdm450
+endif
+
 dtbs_install:
 	$(Q)$(MAKE) $(dtbinst)=$(boot)/dts
 
