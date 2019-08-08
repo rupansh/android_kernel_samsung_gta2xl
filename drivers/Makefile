@@ -173,3 +173,6 @@ obj-$(CONFIG_ESOC)		+= esoc/
 obj-$(CONFIG_BIF)		+= bif/
 
 obj-$(CONFIG_SENSORS_CORE)     += sensors/
+
+# <t-base drivers
+obj-$(CONFIG_TRUSTONIC_TEE)    += gud/
