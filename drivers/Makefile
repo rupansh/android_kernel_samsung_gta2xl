@@ -182,3 +182,6 @@ obj-y                          += debug/
 
 # CCIC
 obj-y += ccic/
+
+# FIVE TEE driver
+obj-$(CONFIG_FIVE_TEE_DRIVER)  += five/
