@@ -176,3 +176,7 @@ obj-$(CONFIG_SENSORS_CORE)     += sensors/
 
 # <t-base drivers
 obj-$(CONFIG_TRUSTONIC_TEE)    += gud/
+
+# CONFIG_SEC_DEBUG
+obj-y                          += debug/
+
