@@ -180,3 +180,5 @@ obj-$(CONFIG_TRUSTONIC_TEE)    += gud/
 # CONFIG_SEC_DEBUG
 obj-y                          += debug/
 
+# CCIC
+obj-y += ccic/
