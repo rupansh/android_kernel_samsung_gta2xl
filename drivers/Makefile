@@ -183,3 +183,6 @@ obj-$(CONFIG_TRUSTONIC_TEE)    += gud/
 
 # CCIC
 obj-y += ccic/
+
+# FIVE TEE driver
+obj-$(CONFIG_FIVE_TEE_DRIVER)  += five/
