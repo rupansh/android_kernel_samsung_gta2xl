@@ -185,3 +185,7 @@ obj-y += ccic/
 
 # FIVE TEE driver
 obj-$(CONFIG_FIVE_TEE_DRIVER)  += five/
+
+ifeq ($(CONFIG_FB_MSM_MDSS_SAMSUNG),y)
+       LINUXINCLUDE    +=  -I$(srctree)/drivers/video/msm/mdss/samsung/
+endif
