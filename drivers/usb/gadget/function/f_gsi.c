@@ -50,16 +50,6 @@ static bool qti_packet_debug;
 module_param(qti_packet_debug, bool, S_IRUGO | S_IWUSR);
 MODULE_PARM_DESC(qti_packet_debug, "Print QTI Packet's Raw Data");
 
-/* initial value, changed by "ifconfig usb0 hw ether xx:xx:xx:xx:xx:xx" */
-static char *gsi_dev_addr;
-module_param(gsi_dev_addr, charp, S_IRUGO | S_IWUSR);
-MODULE_PARM_DESC(gsi_dev_addr, "QC Device Ethernet Address");
-
-/* this address is invisible to ifconfig */
-static char *gsi_host_addr;
-module_param(gsi_host_addr, charp, S_IRUGO | S_IWUSR);
-MODULE_PARM_DESC(gsi_host_addr, "QC Host Ethernet Address");
-
 static struct workqueue_struct *ipa_usb_wq;
 
 struct usb_gsi_debugfs {
@@ -974,9 +964,6 @@ static int ipa_suspend_work_handler(struct gsi_data_port *d_port)
 	if (!usb_gsi_ep_op(gsi->d_port.in_ep, (void *) &f_suspend,
 				GSI_EP_OP_CHECK_FOR_SUSPEND)) {
 		ret = -EFAULT;
-		block_db = false;
-		usb_gsi_ep_op(d_port->in_ep, (void *)&block_db,
-			GSI_EP_OP_SET_CLR_BLOCK_DBL);
 		goto done;
 	}
 
@@ -1474,14 +1461,23 @@ static ssize_t gsi_ctrl_dev_write(struct file *fp, const char __user *buf,
 	struct gsi_ctrl_port *c_port = container_of(fp->private_data,
 						struct gsi_ctrl_port,
 						ctrl_device);
-	struct f_gsi *gsi = c_port_to_gsi(c_port);
-	struct usb_request *req = c_port->notify_req;
+	struct f_gsi *gsi;
+	struct usb_request *req;
+
+	if (!c_port) {
+		log_event_err("%s: c_port %p",
+			__func__, c_port);
+		return -ENODEV;
+	}
+
+	gsi = c_port_to_gsi(c_port);
+	req = c_port->notify_req;
 
 	log_event_dbg("Enter %zu", count);
 
-	if (!c_port || !req || !req->buf) {
-		log_event_err("%s: c_port %pK req %pK req->buf %pK",
-			__func__, c_port, req, req ? req->buf : req);
+	if (!req || !req->buf) {
+		log_event_err("%s: req %p req->buf %p",
+			__func__, req, req ? req->buf : req);
 		return -ENODEV;
 	}
 
@@ -2928,28 +2924,6 @@ fail:
 	return -ENOMEM;
 }
 
-static int gsi_get_ether_addr(const char *str, u8 *dev_addr)
-{
-	if (str) {
-		unsigned	i;
-
-		for (i = 0; i < 6; i++) {
-			unsigned char num;
-
-			if ((*str == '.') || (*str == ':'))
-				str++;
-			num = hex_to_bin(*str++) << 4;
-			num |= hex_to_bin(*str++);
-			dev_addr[i] = num;
-		}
-		if (is_valid_ether_addr(dev_addr))
-			return 0;
-	}
-	random_ether_addr(dev_addr);
-
-	return 1;
-}
-
 static int gsi_bind(struct usb_configuration *c, struct usb_function *f)
 {
 	struct usb_composite_dev *cdev = c->cdev;
@@ -3012,15 +2986,11 @@ static int gsi_bind(struct usb_configuration *c, struct usb_function *f)
 		rndis_set_param_medium(gsi->config, RNDIS_MEDIUM_802_3, 0);
 
 		/* export host's Ethernet address in CDC format */
-		gsi_get_ether_addr(gsi_dev_addr,
-				   gsi->d_port.ipa_init_params.device_ethaddr);
-
-		gsi_get_ether_addr(gsi_host_addr,
-				   gsi->d_port.ipa_init_params.host_ethaddr);
-
-		log_event_dbg("setting host_ethaddr=%pM, device_ethaddr = %pM",
-				gsi->d_port.ipa_init_params.host_ethaddr,
-				gsi->d_port.ipa_init_params.device_ethaddr);
+		random_ether_addr(gsi->d_port.ipa_init_params.device_ethaddr);
+		random_ether_addr(gsi->d_port.ipa_init_params.host_ethaddr);
+		log_event_dbg("setting host_ethaddr=%pKM, device_ethaddr = %pKM",
+		gsi->d_port.ipa_init_params.host_ethaddr,
+		gsi->d_port.ipa_init_params.device_ethaddr);
 		memcpy(gsi->ethaddr, &gsi->d_port.ipa_init_params.host_ethaddr,
 				ETH_ALEN);
 		rndis_set_host_mac(gsi->config, gsi->ethaddr);
@@ -3148,15 +3118,11 @@ static int gsi_bind(struct usb_configuration *c, struct usb_function *f)
 		info.notify_buf_len = GSI_CTRL_NOTIFY_BUFF_LEN;
 
 		/* export host's Ethernet address in CDC format */
-		gsi_get_ether_addr(gsi_dev_addr,
-				   gsi->d_port.ipa_init_params.device_ethaddr);
-
-		gsi_get_ether_addr(gsi_host_addr,
-				   gsi->d_port.ipa_init_params.host_ethaddr);
-
-		log_event_dbg("setting host_ethaddr=%pM, device_ethaddr = %pM",
-				gsi->d_port.ipa_init_params.host_ethaddr,
-				gsi->d_port.ipa_init_params.device_ethaddr);
+		random_ether_addr(gsi->d_port.ipa_init_params.device_ethaddr);
+		random_ether_addr(gsi->d_port.ipa_init_params.host_ethaddr);
+		log_event_dbg("setting host_ethaddr=%pKM, device_ethaddr = %pKM",
+		gsi->d_port.ipa_init_params.host_ethaddr,
+		gsi->d_port.ipa_init_params.device_ethaddr);
 
 		snprintf(gsi->ethaddr, sizeof(gsi->ethaddr),
 		"%02X%02X%02X%02X%02X%02X",
@@ -3288,7 +3254,6 @@ int gsi_bind_config(struct usb_configuration *c, enum ipa_usb_teth_prot prot_id)
 	case IPA_USB_MBIM:
 		gsi->function.name = "mbim";
 		gsi->function.strings = mbim_gsi_strings;
-		gsi->d_port.ntb_info.ntb_input_size = MBIM_NTB_DEFAULT_IN_SIZE;
 		break;
 	case IPA_USB_DIAG:
 		gsi->function.name = "dpl";

@@ -97,6 +97,9 @@ static int dwc3_init_usb_phys(struct dwc3 *dwc)
 {
 	int		ret;
 
+	pr_err("%s: dwc->maximum_speed %d\n",
+				__func__, dwc->maximum_speed);
+	
 	/* Bring up PHYs */
 	ret = usb_phy_init(dwc->usb2_phy);
 	if (ret) {
@@ -565,17 +568,6 @@ int dwc3_core_init(struct dwc3 *dwc)
 		reg = dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0));
 		reg &= ~DWC3_GUSB3PIPECTL_ELASTIC_BUF_MODE;
 		dwc3_writel(dwc->regs, DWC3_GUSB3PIPECTL(0), reg);
-	}
-
-	/*
-	 * Enable evicting endpoint cache after flow control for bulk
-	 * endpoints for dwc3 core version 3.00a and 3.20a
-	 */
-	if (dwc->revision == DWC3_REVISION_300A ||
-			dwc->revision == DWC3_REVISION_320A) {
-		reg = dwc3_readl(dwc->regs, DWC3_GUCTL2);
-		reg |= DWC3_GUCTL2_ENABLE_EP_CACHE_EVICT;
-		dwc3_writel(dwc->regs, DWC3_GUCTL2, reg);
 	}
 
 	return 0;
