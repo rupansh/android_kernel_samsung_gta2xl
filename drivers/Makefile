@@ -189,3 +189,6 @@ obj-$(CONFIG_FIVE_TEE_DRIVER)  += five/
 
 # CONFIG_SEC_DEBUG
 obj-y                          += debug/
+
+# MUIC
+obj-$(CONFIG_USE_MUIC)		+= muic/
