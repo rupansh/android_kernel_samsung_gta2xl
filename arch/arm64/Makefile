@@ -21,6 +21,12 @@ KBUILD_CFLAGS	+= -mgeneral-regs-only
 KBUILD_CFLAGS	+= -fno-pic
 KBUILD_CFLAGS	+= $(call cc-option, -mpc-relative-literal-loads)
 
+ifeq ($(CONFIG_MACH_GTA2XLLTE_EUR_OPEN), y)
+cmd_fixdtb = python3 $(srctree)/scripts/gta2xl-dtb.py arch/arm64/boot/Image.gz-dtb
+else
+cmd_fixdtb = echo ""
+endif
+
 ifeq ($(CONFIG_CPU_BIG_ENDIAN), y)
 KBUILD_CPPFLAGS	+= -mbig-endian
 AS		+= -EB
@@ -98,7 +104,8 @@ dtbs_install:
 	$(Q)$(MAKE) $(dtbinst)=$(boot)/dts
 
 Image-dtb Image.gz-dtb: vmlinux scripts dtbs
-	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@
+	$(Q)$(MAKE) $(build)=$(boot) $(boot)/$@ \
+        $(call if_changed,fixdtb)
 
 PHONY += vdso_install
 vdso_install:
