@@ -1,0 +1,55 @@
+config SEC_GTA2XLLTE_PROJECT
+	depends on ARCH_SDM450
+	default n
+	bool "Samsung Tab A2 XL LTE Project"
+	help
+	  Support for Samsung Tab A2 XL LTE Project
+
+config MACH_GTA2XLLTE_CHN_OPEN
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE CHN OPEN"
+	help
+	  Support for Samsung Tab A2 XL LTE CHN OPEN device.
+
+config MACH_GTA2XLLTE_EUR_OPEN
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE EUR OPEN"
+	help
+	  Support for Samsung Tab A2 XL LTE EUR OPEN device.
+
+config MACH_GTA2XLLTE_USA_SPR
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE USA SPR"
+	help
+	  Support for Samsung Tab A2 XL LTE USA SPR device.
+
+config MACH_GTA2XLLTE_USA_VZW
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE USA VZW"
+	help
+	  Support for Samsung Tab A2 XL LTE USA VZW device.
+	  
+config MACH_GTA2XLLTE_MEA_OPEN
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE MEA OPEN"
+	help
+	  Support for Samsung Tab A2 XL LTE MEA OPEN device.
+	  
+config MACH_GTA2XLLTE_MEA_TUR
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE MEA TUR"
+	help
+  	  Support for Samsung Tab A2 XL LTE MEA TUR device.
+
+config MACH_GTA2XLLTE_KOR_OPEN
+	depends on SEC_GTA2XLLTE_PROJECT
+	default n
+	bool "Samsung Tab A2 XL LTE KOR OPEN"
+	help
+	  Support for Samsung Tab A2 XL LTE KOR OPEN device.
