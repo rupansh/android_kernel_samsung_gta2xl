@@ -424,6 +424,7 @@ bool nf_ct_delete(struct nf_conn *ct, u32 portid, int report)
 }
 EXPORT_SYMBOL_GPL(nf_ct_delete);
 
+#ifdef CONFIG_KNOX_NCM
 /* START_OF_KNOX_NPA */
 /* Use this function only if struct nf_conn->timeout is of type struct timer_list */
 static void death_by_timeout_npa(unsigned long ul_conntrack)
@@ -444,14 +445,17 @@ static void death_by_timeout_npa(unsigned long ul_conntrack)
 	return;
 }
 /* END_OF_KNOX_NPA */
+#endif
 
 static void death_by_timeout(unsigned long ul_conntrack)
 {
+#ifdef CONFIG_KNOX_NCM
 	/* START_OF_KNOX_NPA */
 	struct nf_conn *tmp = (struct nf_conn *)ul_conntrack;
 	atomic_set(&tmp->intermediateFlow, 0);
 	del_timer(&tmp->npa_timeout);
 	/* END_OF_KNOX_NPA */
+#endif
 	nf_ct_delete((struct nf_conn *)ul_conntrack, 0, 0);
 }
 
