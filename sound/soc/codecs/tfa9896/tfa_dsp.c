@@ -840,7 +840,7 @@ tfa98xx_filter_mem(tfa98xx_handle_t dev,
 		case 0x72:
 		default:
 			/* unsupported case, possibly intermediate version */
-			return TFA_ERROR;
+			return TFA98XX_DMEM_ERR;
 			_ASSERT(0);
 		}
 	}
@@ -965,7 +965,7 @@ enum tfa98xx_error tfa98xx_set_saam_use_case(int samstream)
 
 	if (devcount < 1) {
 		pr_err("No or wrong container file loaded\n");
-		return tfa_error_bad_param;
+		return TFA98XX_ERROR_BAD_PARAMETER;
 	}
 
 	for (dev = 0; dev < devcount; dev++)
@@ -986,7 +986,7 @@ enum tfa98xx_error tfa98xx_set_stream_state(int stream_state)
 
 	if (devcount < 1) {
 		pr_err("No or wrong container file loaded\n");
-		return tfa_error_bad_param;
+		return TFA98XX_ERROR_BAD_PARAMETER;
 	}
 
 	for (dev = 0; dev < devcount; dev++)
@@ -4833,7 +4833,7 @@ error_exit:
 
 enum tfa_error tfa_stop(void)
 {
-	enum tfa98xx_error err = TFA98XX_ERROR_OK;
+	enum tfa_error err = tfa_error_ok;
 	int dev, devcount = tfa98xx_cnt_max_device();
 
 	if (devcount == 0) {
@@ -4843,14 +4843,14 @@ enum tfa_error tfa_stop(void)
 
 	for (dev = 0; dev < devcount; dev++) {
 		err = tfa_cont_open(dev);
-		if (err != TFA98XX_ERROR_OK)
+		if (err != tfa_error_ok)
 			goto error_exit;
 		if (tfa98xx_runtime_verbose)
 			pr_debug("Stopping device [%s]\n",
 				 tfa_cont_device_name(dev));
 
 		err = _tfa_stop(dev);
-		if (err != TFA98XX_ERROR_OK)
+		if (err != tfa_error_ok)
 			goto error_exit;
 	}
 

@@ -2081,7 +2081,7 @@ static int tfa98xx_info_profile(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 
 	strlcpy(uinfo->value.enumerated.name,
-		profile_name, strlen(profile_name));
+		profile_name, strlen(uinfo->value.enumerated.name));
 
 	return 0;
 }
@@ -3443,7 +3443,7 @@ static void tfa98xx_interrupt(struct work_struct *work)
 			int no_clk = TFA_GET_BF(tfa98xx->handle, NOCLK);
 			/* Detect for clock is lost! (clock is not stable) */
 			if ((tfa98xx->handle == 0) && (no_clk == 1)) {
-				enum tfa98xx_error err;
+				enum tfa_error err;
 				/* Clock lost. Set I2CR to remove POP noise */
 				pr_info("No clock detected. Resetting I2CR to avoid pop on 72!\n");
 				err = tfa98xx_tfa_start
